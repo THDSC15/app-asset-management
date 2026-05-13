@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+    <title>Edit Asset</title>
+</head>
+<body>
+    <h1>Edit Asset</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>{{ form.name.label }}<br>{{ form.name() }}</p>
+        <p>{{ form.description.label }}<br>{{ form.description() }}</p>
+        <p>{{ form.category_id.label }}<br>{{ form.category_id() }}</p>
+        <p>{{ form.assigned_to.label }}<br>{{ form.assigned_to() }}</p>
+        <p>{{ form.status.label }}<br>{{ form.status() }}</p>
+        <p>{{ form.submit(value='Update') }}</p>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <p style="color: red">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+</body>
+</html>

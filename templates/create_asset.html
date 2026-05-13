@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <title>Create Asset</title>
+</head>
+<body>
+    <h1>Create Asset</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>{{ form.name.label }}<br>{{ form.name() }}</p>
+
+        {% for error in form.name.errors %}
+            <p style="color:red;">{{ error }}</p>
+        {% endfor %}
+        <p>{{ form.description.label }}<br>{{ form.description() }}</p>
+
+        {% for error in form.description.errors %}
+            <p style="color:red;">{{ error }}</p>
+        {% endfor %}
+        <p>{{ form.category_id.label }}<br>{{ form.category_id() }}</p>
+        <p>{{ form.assigned_to.label }}<br>{{ form.assigned_to() }}</p>
+
+        {% for error in form.assigned_to.errors %}
+            <p style="color:red;">{{ error }}</p>
+        {% endfor %}
+        <p>{{ form.status.label }}<br>{{ form.status() }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <p style="color: rgb(67, 192, 0)">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+</body>
+</html>
