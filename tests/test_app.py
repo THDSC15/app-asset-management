@@ -127,3 +127,42 @@ def test_admin_user_can_delete_asset():
     with app.app_context():
         deleted_asset = db.session.get(Asset, asset_id)
         assert deleted_asset is None
+
+def test_asset_name_validation_rejects_short_name():
+
+    with app.app_context():
+
+        category = Category(name='Validation Test Category')
+        db.session.add(category)
+        db.session.commit()
+
+        username = f"validationuser_{uuid.uuid4().hex[:8]}"
+
+        user = User(
+            username=username,
+            password=generate_password_hash('password123'),
+            role='regular'
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        category_id = category.id
+
+    tester = app.test_client()
+
+    tester.post('/login', data={
+        'username': username,
+        'password': 'password123'
+    }, follow_redirects=True)
+
+    response = tester.post('/asset/create', data={
+        'name': 'A',
+        'description': 'Valid description',
+        'category_id': category_id,
+        'assigned_to': username,
+        'status': 'Available'
+    }, follow_redirects=True)
+
+    assert response.status_code == 200
+    assert b'Field must be between 2 and 100 characters long' in response.data
