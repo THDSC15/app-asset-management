@@ -21,7 +21,7 @@ login_manager.login_view = 'login'
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)  # stored in plain text for assignment viewing
+    password = db.Column(db.String(255), nullable=False)  # stores hashed passwords
     role = db.Column(db.String(10), nullable=False)  # 'admin' or 'regular'
 
 class Category(db.Model):
