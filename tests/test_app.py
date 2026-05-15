@@ -8,21 +8,17 @@ from app import app
 from app import db, User, Category, Asset
 from werkzeug.security import generate_password_hash
 
-app.config['TESTING'] = True
-app.config['WTF_CSRF_ENABLED'] = False
 
 
-def test_home_redirect():
-    tester = app.test_client()
+def test_home_redirect(client):
 
-    response = tester.get('/', follow_redirects=True)
+    response = client.get('/', follow_redirects=True)
 
     assert response.status_code == 200
 
-def test_invalid_login_rejected():
-    tester = app.test_client()
+def test_invalid_login_rejected(client):
 
-    response = tester.post('/login', data={
+    response = client.post('/login', data={
         'username': 'fakeuser',
         'password': 'wrongpassword'
     }, follow_redirects=True)
@@ -30,7 +26,7 @@ def test_invalid_login_rejected():
     assert response.status_code == 200
     assert b'Invalid username or password' in response.data
 
-def test_regular_user_cannot_delete_asset():
+def test_regular_user_cannot_delete_asset(client):
 
     with app.app_context():
 
@@ -66,21 +62,20 @@ def test_regular_user_cannot_delete_asset():
 
         asset_id = asset.id
 
-    tester = app.test_client()
 
     # Login as regular user
-    tester.post('/login', data={
+    client.post('/login', data={
         'username': username,
         'password': 'password123'
     }, follow_redirects=True)
 
     # Attempt delete
-    response = tester.post(f'/asset/delete/{asset_id}', follow_redirects=True)
+    response = client.post(f'/asset/delete/{asset_id}', follow_redirects=True)
 
     assert b'Only admins can delete assets' in response.data
 
 
-def test_admin_user_can_delete_asset():
+def test_admin_user_can_delete_asset(client):
 
     with app.app_context():
 
@@ -112,14 +107,13 @@ def test_admin_user_can_delete_asset():
 
         asset_id = asset.id
 
-    tester = app.test_client()
 
-    tester.post('/login', data={
+    client.post('/login', data={
         'username': username,
         'password': 'password123'
     }, follow_redirects=True)
 
-    response = tester.post(f'/asset/delete/{asset_id}', follow_redirects=True)
+    response = client.post(f'/asset/delete/{asset_id}', follow_redirects=True)
 
     assert response.status_code == 200
     assert b'Asset deleted' in response.data
@@ -128,7 +122,7 @@ def test_admin_user_can_delete_asset():
         deleted_asset = db.session.get(Asset, asset_id)
         assert deleted_asset is None
 
-def test_asset_name_validation_rejects_short_name():
+def test_asset_name_validation_rejects_short_name(client):
 
     with app.app_context():
 
@@ -149,14 +143,13 @@ def test_asset_name_validation_rejects_short_name():
 
         category_id = category.id
 
-    tester = app.test_client()
 
-    tester.post('/login', data={
+    client.post('/login', data={
         'username': username,
         'password': 'password123'
     }, follow_redirects=True)
 
-    response = tester.post('/asset/create', data={
+    response = client.post('/asset/create', data={
         'name': 'A',
         'description': 'Valid description',
         'category_id': category_id,
