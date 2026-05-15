@@ -8,7 +8,8 @@ from app import app
 from app import db, User, Category, Asset
 from werkzeug.security import generate_password_hash
 
-
+app.config['TESTING'] = True
+app.config['WTF_CSRF_ENABLED'] = False
 
 def test_home_redirect(client):
 
