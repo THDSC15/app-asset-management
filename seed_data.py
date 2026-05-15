@@ -1,13 +1,14 @@
 from app import app, db, User, Category, Asset
 import random
+from werkzeug.security import generate_password_hash
 
 with app.app_context():
     db.drop_all()
     db.create_all()
 
     # Plain-text passwords for testing
-    admin_password = 'adminpass'
-    user_password = 'userpass'
+    admin_password = generate_password_hash('adminpass')
+    user_password = generate_password_hash('userpass')
 
     # Admin users
     admin_users = [
