@@ -1,58 +1,77 @@
-<!doctype html>
-<html>
-<head>
-    <title>IT Asset Dashboard</title>
-</head>
-<body>
-    <h1>Welcome, {{ current_user.username }}!</h1>
+{% extends "base.html" %}
 
-    <p><a href="{{ url_for('create_asset') }}">Create New Asset</a></p>
-    <p><a href="{{ url_for('logout') }}">Logout</a></p>
+{% block title %}Asset Dashboard{% endblock %}
 
-    <h2>All Assets</h2>
+{% block content %}
 
-    {% if assets %}
-        <table border="1" cellpadding="5">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Assigned To</th>
-                <th>Actions</th>
-            </tr>
-            {% for asset in assets %}
-                <tr>
-                    <td>{{ asset.name }}</td>
-                    <td>{{ asset.description }}</td>
-                    <td>{{ asset.category.name }}</td>
-                    <td>{{ asset.assigned_to }}</td>
-                    <td>
-                        <a href="{{ url_for('edit_asset', id=asset.id) }}">Edit</a>
-                        {% if current_user.role == 'admin' %}
-                            <form method="POST"
-                                action="{{ url_for('delete_asset', id=asset.id) }}"
-                                style="display:inline;">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-1">Asset Dashboard</h1>
+        <p class="text-muted mb-0">Welcome, {{ current_user.username }}.</p>
+    </div>
 
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <a href="{{ url_for('create_asset') }}" class="btn btn-primary">
+        Create New Asset
+    </a>
+</div>
 
-                                <button type="submit"
-                                        onclick="return confirm('Are you sure you want to delete this asset?');">
-                                    Delete
-                                </button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No assets found.</p>
-    {% endif %}
+{% if assets %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <p style="color: red">{{ message }}</p>
-      {% endfor %}
-    {% endwith %}
-</body>
-</html>
+                <tbody>
+                    {% for asset in assets %}
+                        <tr>
+                            <td>{{ asset.name }}</td>
+                            <td>{{ asset.description }}</td>
+                            <td>{{ asset.category.name }}</td>
+                            <td>{{ asset.assigned_to or 'Unassigned' }}</td>
+                            <td>
+                                <span class="badge bg-secondary">
+                                    {{ asset.status }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ url_for('edit_asset', id=asset.id) }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                {% if current_user.role == 'admin' %}
+                                    <form method="POST"
+                                          action="{{ url_for('delete_asset', id=asset.id) }}"
+                                          class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to delete this asset?');">
+                                            Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        No assets found.
+    </div>
+{% endif %}
+
+{% endblock %}

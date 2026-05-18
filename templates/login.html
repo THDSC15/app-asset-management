@@ -1,23 +1,32 @@
-<!doctype html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <p>{{ form.username.label }}<br>{{ form.username() }}</p>
-        <p>{{ form.password.label }}<br>{{ form.password() }}</p>
-        <p>{{ form.submit(value='Login') }}</p>
-    </form>
+{% extends "base.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <p style="color: red">{{ message }}</p>
-      {% endfor %}
-    {% endwith %}
+{% block title %}Login{% endblock %}
 
-    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm mx-auto" style="max-width: 420px;">
+    <div class="card-body">
+        <h1 class="h3 mb-3">Login</h1>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </div>
+
+            {{ form.submit(class="btn btn-primary w-100", value="Login") }}
+        </form>
+
+        <p class="mt-3 mb-0">
+            Don't have an account?
+            <a href="{{ url_for('register') }}">Register here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
