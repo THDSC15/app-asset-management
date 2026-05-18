@@ -11,13 +11,15 @@ from werkzeug.security import generate_password_hash
 app.config['TESTING'] = True
 app.config['WTF_CSRF_ENABLED'] = False
 
-def test_home_redirect(client):
+def test_home_redirect():
+    client = app.test_client()
 
     response = client.get('/', follow_redirects=True)
 
     assert response.status_code == 200
 
-def test_invalid_login_rejected(client):
+def test_invalid_login_rejected():
+    client = app.test_client()
 
     response = client.post('/login', data={
         'username': 'fakeuser',
@@ -27,7 +29,8 @@ def test_invalid_login_rejected(client):
     assert response.status_code == 200
     assert b'Invalid username or password' in response.data
 
-def test_regular_user_cannot_delete_asset(client):
+def test_regular_user_cannot_delete_asset():
+    client = app.test_client()
 
     with app.app_context():
 
@@ -76,7 +79,8 @@ def test_regular_user_cannot_delete_asset(client):
     assert b'Only admins can delete assets' in response.data
 
 
-def test_admin_user_can_delete_asset(client):
+def test_admin_user_can_delete_asset():
+    client = app.test_client()
 
     with app.app_context():
 
@@ -123,7 +127,8 @@ def test_admin_user_can_delete_asset(client):
         deleted_asset = db.session.get(Asset, asset_id)
         assert deleted_asset is None
 
-def test_asset_name_validation_rejects_short_name(client):
+def test_asset_name_validation_rejects_short_name():
+    client = app.test_client()
 
     with app.app_context():
 
