@@ -13,7 +13,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
-
+    
 class AssetForm(FlaskForm):
     name = StringField('Asset Name', validators=[
         DataRequired(),
@@ -22,7 +22,7 @@ class AssetForm(FlaskForm):
 
     description = StringField('Description', validators=[
         Optional(),
-        Length(max=250)
+        Length(max=200, message='Description must not exceed 200 characters.'),
     ])
 
     category_id = SelectField('Category', coerce=int, validators=[
